@@ -1,5 +1,6 @@
 #pragma once
 #include "jobStack.h"
+
 class Processor
 {
 private:
@@ -14,5 +15,5 @@ public:
 	bool isComplete();
 	void processJobOne();
 	job peekJob() { return currentJob; }
-	
+	~Processor();
 };
