@@ -14,7 +14,9 @@ int main()
 	jobStack inputJobs;
 	MinHeap jobHeap(5000);
 	ofstream logFile;
+	ofstream outfile;
 	logFile.open("job_data.txt");
+	outfile.open("log.txt");
 	float heapAvg = 0;
 	int maxQueue = 0;
 	long int idleCount = 0;
@@ -191,23 +193,23 @@ int main()
 	totalWaitTime = totalWaitTime + jobHeap.getRemainingWaitTime();
 	averageWaitTime = totalWaitTime / totalJobsArrived;
 
-	logFile << endl << "Performance Metrics - Calculated from cycle 500 on" << endl;
-	logFile << "Final Queue Size: " << jobHeap.size() << endl;
-	logFile << "Average queue size: " << heapAvg << endl;
-	logFile << "Average time in queue: " << averageWaitTime << " time units" << endl;
-	logFile << "Idle time: " << idleCount << " time units." << endl;
-	logFile << "Total Jobs Arrived: " << totalJobsArrived << endl;
-	logFile << "Total number of jobs A arrived: " << aCount << endl;
-	logFile << "Total number of jobs B arrived: " << bCount << endl;
-	logFile << "Total number of jobs C arrived: " << cCount << endl;
-	logFile << "Total number of jobs D arrived: " << dCount << endl;
-	logFile << "Total wait time in queue: " << totalWaitTime << " time units." << endl;
-	logFile << "Maximum jobs in queue: " << maxQueue << endl;
-	logFile << "Jobs interrupted " << jobsInterrupted << endl;
-	logFile << "Total jobs completed: " << jobsCompleted << endl;
-	logFile << "Number of processor(s) used: " << userCPU << endl;
-	logFile << "Total number of time units the processors(s) run: " << activeCycle << endl;
-	logFile << "Total time processor(s) spent processing is: " << totalProcessingTime << " time units" << endl;
+	outfile << endl << "Performance Metrics - Calculated from cycle 500 on" << endl;
+	outfile << "Final Queue Size: " << jobHeap.size() << endl;
+	outfile << "Average queue size: " << heapAvg << endl;
+	outfile << "Average time in queue: " << averageWaitTime << " time units" << endl;
+	outfile << "Idle time: " << idleCount << " time units." << endl;
+	outfile << "Total Jobs Arrived: " << totalJobsArrived << endl;
+	outfile << "Total number of jobs A arrived: " << aCount << endl;
+	outfile << "Total number of jobs B arrived: " << bCount << endl;
+	outfile << "Total number of jobs C arrived: " << cCount << endl;
+	outfile << "Total number of jobs D arrived: " << dCount << endl;
+	outfile << "Total wait time in queue: " << totalWaitTime << " time units." << endl;
+	outfile << "Maximum jobs in queue: " << maxQueue << endl;
+	outfile << "Jobs interrupted " << jobsInterrupted << endl;
+	outfile << "Total jobs completed: " << jobsCompleted << endl;
+	outfile << "Number of processor(s) used: " << userCPU << endl;
+	outfile << "Total number of time units the processors(s) run: " << activeCycle << endl;
+	outfile << "Total time processor(s) spent processing is: " << totalProcessingTime << " time units" << endl;
 
 
 	cout << endl << "Performance Metrics - Calculated from cycle 500 on" << endl;
@@ -228,6 +230,7 @@ int main()
 	cout << "Total number of time units the processors(s) run: " << activeCycle << endl;
 	cout << "Total time processor(s) spent processing is: " << totalProcessingTime << " time units" << endl;
 	logFile.close();
+	outfile.close();
 	//jobHeap.print();
 
 	cout << "Report information is in the file log.txt" << endl;

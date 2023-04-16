@@ -1,0 +1,18 @@
+
+Performance Metrics - Calculated from cycle 500 on
+Final Queue Size: 0
+Average queue size: 0.00490048
+Average time in queue: 0 time units
+Idle time: 16565 time units.
+Total Jobs Arrived: 3549
+Total number of jobs A arrived: 1901
+Total number of jobs B arrived: 950
+Total number of jobs C arrived: 381
+Total number of jobs D arrived: 317
+Total wait time in queue: 50 time units.
+Maximum jobs in queue: 1
+Jobs interrupted 281
+Total jobs completed: 3547
+Number of processor(s) used: 4
+Total number of time units the processors(s) run: 9196
+Total time processor(s) spent processing is: 21435 time units
