@@ -29,32 +29,38 @@ int main()
 	int userCPU;
 
 	createJobStack(inputJobs);
-	//inputJobs.print();
+	
 
+	// Print a welcome message to the console
 	cout << "Welcome to the Test Processor Program!" << endl;
 
+	// Loop until the user enters a valid input
 	do {
+		
 		cout << "How many processors would you like to use in this test?" << endl;
 		cin >> userCPU;
 
+		// If the user entered an invalid input, print an error message
 		if (userCPU < 0) {
 			cout << "Invalid Input" << endl;
 		}
 	} while (userCPU < 1);
 
-
+	// Create an array of Processor objects based on the user input
 	Processor* CPU = new Processor[userCPU];
 
-	//main program loop
+	
 	for (int time = 0; time < 10000; time++) {
 
+		// If the current time is greater than or equal to 500, log time and job information
 		if (time >= 500) {
 			logFile << time << ") ";
 		}
 
-		//complete job
+		// Check if any of the processors have completed a job
 		for (int i_cpu = 0; i_cpu < userCPU; i_cpu++) {
 			if (CPU[i_cpu].isComplete() && CPU[i_cpu].isFull()) {
+				// If a job has completed, pop it from the processor and log the completed job information
 				job tempJob;
 				tempJob = CPU[i_cpu].pop();
 
@@ -65,7 +71,7 @@ int main()
 			}
 		}
 
-		//add to the heap
+		// Add arriving jobs to the job heap and log job information if time is greater than or equal to 500
 		while (inputJobs.peekArrivalTime() == time) {
 			job tempJob = inputJobs.pop();
 
@@ -76,7 +82,7 @@ int main()
 					<< ", Job " << tempJob.jobType << " " << tempJob.typeNumber
 					<< ", Processing Time " << tempJob.processingTime << "; ";
 
-				//count job types
+				// Count job types
 				switch (tempJob.jobType)
 				{
 				case 'A':
@@ -96,50 +102,60 @@ int main()
 		}
 
 
-		//interrupt for type D jobs
-		for (int i_cpu = 0; i_cpu < userCPU; i_cpu++) {
-			if (CPU[i_cpu].isEmpty() || jobHeap.size() == 0) {
-				continue;
-			}
-
-			job temp = jobHeap.getMin();
-
-			if (temp.jobType == 'D') {
-				job displacedJob;
-				job Djob;
-				displacedJob = CPU[i_cpu].pop();
-				Djob = jobHeap.extractMin();
-				CPU[i_cpu].push(Djob);
-				jobHeap.insertKey(displacedJob);
-
-				if (time >= 500) {
-					jobsInterrupted++;
-					logFile << "Interrupt Job " << displacedJob.jobType << " " << displacedJob.typeNumber
-						<< ", Total Interrupted Jobs: " << jobsInterrupted << ", New high priority job goes into Processor " << i_cpu + 1
-						<< ", Job " << displacedJob.jobType << " " << displacedJob.typeNumber
-						<< "Added to heap with processing time " << displacedJob.processingTime << ";";
+		// interrupt for type D jobs
+			// iterate through each CPU to check if they are empty or if there are jobs in the heap
+			for (int i_cpu = 0; i_cpu < userCPU; i_cpu++) {
+				// if the CPU is empty or the heap is empty, continue to the next iteration
+				if (CPU[i_cpu].isEmpty() || jobHeap.size() == 0) {
+					continue;
 				}
-			}
-			else {
-				break;
-			}
+
+				// get the minimum job from the heap
+				job temp = jobHeap.getMin();
+
+				// if the job is of type D, swap it with the lowest priority job in the CPU and add the displaced job to the heap
+				if (temp.jobType == 'D') {
+					job displacedJob;
+					job Djob;
+					displacedJob = CPU[i_cpu].pop();
+					Djob = jobHeap.extractMin();
+					CPU[i_cpu].push(Djob);
+					jobHeap.insertKey(displacedJob);
+
+					if (time >= 500) {
+						jobsInterrupted++;
+						// output to log file
+						logFile << "Interrupt Job " << displacedJob.jobType << " " << displacedJob.typeNumber
+							<< ", Total Interrupted Jobs: " << jobsInterrupted << ", New high priority job goes into Processor " << i_cpu + 1
+							<< ", Job " << displacedJob.jobType << " " << displacedJob.typeNumber
+							<< "Added to heap with processing time " << displacedJob.processingTime << ";";
+					}
+				}
+				// if the job is not of type D, break out of the loop
+				else {
+					break;
+				}
+
 
 
 		}
 
-		//Add to CPU
-		for (int i_cpu = 0; i_cpu < userCPU; i_cpu++) {
-			if (jobHeap.isEmpty()) {
-				if (time >= 500) {
-					logFile << "Heap Empty; ";
+			// Add to CPU
+			// iterate through each CPU and assign jobs from the heap if the CPU is empty
+			for (int i_cpu = 0; i_cpu < userCPU; i_cpu++) {
+				// if the heap is empty, break out of the loop
+				if (jobHeap.isEmpty()) {
+					if (time >= 500) {
+						logFile << "Heap Empty; ";
+					}
+					break;
 				}
-				break;
-			}
-			else if (CPU[i_cpu].isEmpty()) {
-				job tempJob = jobHeap.extractMin();
-				totalWaitTime = totalWaitTime + tempJob.waitTime;
-				tempJob.waitTime = 0; //reset in case it is displaced in interrupt
-				CPU[i_cpu].push(tempJob);
+				// if the CPU is empty, assign the minimum job from the heap to the CPU
+				else if (CPU[i_cpu].isEmpty()) {
+					job tempJob = jobHeap.extractMin();
+					totalWaitTime = totalWaitTime + tempJob.waitTime;
+					tempJob.waitTime = 0; //reset in case it is displaced in interrupt
+					CPU[i_cpu].push(tempJob);
 
 				if (time >= 500) {
 					logFile << "Begin Processing Job " << tempJob.jobType << " " << tempJob.typeNumber
@@ -148,36 +164,40 @@ int main()
 			}
 		}
 
-		//Process
-		bool activeJob = false;
+			// Process the jobs in each CPU
+			bool activeJob = false;
 
-		for (int i_cpu = 0; i_cpu < userCPU; i_cpu++) {
-			if (CPU[i_cpu].isEmpty()) {
-				if (time >= 500) {
-					logFile << "CPU " << i_cpu + 1 << ": Idle Time ";
-					idleCount++;
+			for (int i_cpu = 0; i_cpu < userCPU; i_cpu++) {
+				// Check if CPU is idle
+				if (CPU[i_cpu].isEmpty()) {
+					if (time >= 500) {
+						logFile << "CPU " << i_cpu + 1 << ": Idle Time ";
+						idleCount++;
+					}
+				}
+				// If CPU is not idle, process the job
+				else {
+					job tempJob = CPU[i_cpu].peekJob();
+					CPU[i_cpu].processJobOne();
+					activeJob = true;
+					if (time >= 500) {
+						logFile << "CPU " << i_cpu + 1 << ": Job " << tempJob.jobType << " " << tempJob.jobNumber << "; ";
+						totalProcessingTime++;
+					}
 				}
 			}
-			else {
-				job tempJob = CPU[i_cpu].peekJob();
-				CPU[i_cpu].processJobOne();
-				activeJob = true;
-				if (time >= 500) {
-					logFile << "CPU " << i_cpu + 1 << ": Job " << tempJob.jobType << " " << tempJob.jobNumber << "; ";
-					totalProcessingTime++;
-				}
-			}
-		}
 
-		jobHeap.addWaitTime();
+			// Increase wait time for jobs in heap
+			jobHeap.addWaitTime();
 
-		if (activeJob == true && time >= 500)
-			activeCycle++;
+			// Update active cycle count and heap statistics
+			if (activeJob == true && time >= 500)
+				activeCycle++;
 
-		if (time >= 500) {
-			heapAvg = heapAvg + (jobHeap.size() - heapAvg) / time;
-			if (jobHeap.size() > maxQueue)
-				maxQueue = jobHeap.size();
+			if (time >= 500) {
+				heapAvg = heapAvg + (jobHeap.size() - heapAvg) / time;
+				if (jobHeap.size() > maxQueue)
+					maxQueue = jobHeap.size();
 
 			logFile << endl;
 		}
@@ -192,7 +212,7 @@ int main()
 	int totalJobsArrived = aCount + bCount + cCount + dCount;
 	totalWaitTime = totalWaitTime + jobHeap.getRemainingWaitTime();
 	averageWaitTime = totalWaitTime / totalJobsArrived;
-
+	//output to log.txt
 	outfile << endl << "Performance Metrics - Calculated from cycle 500 on" << endl;
 	outfile << "Final Queue Size: " << jobHeap.size() << endl;
 	outfile << "Average queue size: " << heapAvg << endl;
@@ -211,7 +231,7 @@ int main()
 	outfile << "Total number of time units the processors(s) run: " << activeCycle << endl;
 	outfile << "Total time processor(s) spent processing is: " << totalProcessingTime << " time units" << endl;
 
-
+	//output to console
 	cout << endl << "Performance Metrics - Calculated from cycle 500 on" << endl;
 	cout << "Final Queue Size: " << jobHeap.size() << endl;
 	cout << "Average queue size: " << heapAvg << endl;
