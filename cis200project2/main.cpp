@@ -326,10 +326,11 @@ void createJobStack(jobStack& inputJobs)
 	}
 	//outputs the job data in reverse (start at the bottom of the text file and go up)
 	//The job data being used is in the correct order, just the text file is in reverse
+	myfile << "|Job Number|" << " " << "|Arrival Time|" << " " << "|Processing Time|" << endl;;
 	while (tempJobs.isEmpty() != true) {
 		job temp = tempJobs.pop();
 		inputJobs.push(temp);
-		myfile << temp.jobNumber << " " << temp.arrivalTime << " " << temp.processingTime << "\n";
+		myfile << "    " << temp.jobNumber << "		" << temp.arrivalTime << "		     " << temp.processingTime << "\n";
 	}
 
 	inputJobs.quickSort(0, inputJobs.getCount() - 1);
